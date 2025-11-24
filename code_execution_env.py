@@ -72,7 +72,7 @@ class CodeExecutionEnvironment:
             '_getitem_': lambda ob, index: ob[index],
             '_getiter_': lambda ob: iter(ob),
             '_iter_unpack_sequence_': lambda ob: ob,
-            '__import__': __import__,
+            '__import__': lambda name: __import__(name) if name in ['json', 'time', 'math', 'random', 'datetime', 'collections', 'itertools', 'functools', 'operator', 're', 'urllib.parse'] else None,
             '_unpack_sequence_': lambda ob: ob,
             '_abs_': abs,
             '_min_': min,
@@ -82,7 +82,7 @@ class CodeExecutionEnvironment:
             '_setattr_': setattr,
             '_delattr_': delattr,
             '_getpath_': lambda ob, name: getattr(ob, name),
-            # 注意：_write_函数不会添加，以保持环境安全
+            '_write_': lambda obj: obj,  # 添加_write_函数以支持变量赋值
             # 工具API接口
             'get_document': get_document,
             'update_salesforce_record': update_salesforce_record,
@@ -91,6 +91,7 @@ class CodeExecutionEnvironment:
             'get_sheet_data': get_sheet_data,
             'update_sheet': update_sheet,
             'call_mcp_tool': call_mcp_tool,
+            'time': __import__('time'),  # 添加time模块
         }
         
         # 添加标准库的安全子集
